@@ -1,1 +1,4 @@
-{"youtube": "https://www.youtube.com"}
+{
+    "youtube": "https://www.youtube.com",
+    "_search": "https://www.google.com/search?q={}"
+}

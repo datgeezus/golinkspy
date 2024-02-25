@@ -9,10 +9,6 @@ port = 6060
 
 SEARCH_URL = "https://www.google.com/search?q={}"
 
-LINKS = {
-    "youtube": "https://www.youtube.com"
-}
-
 @dataclass
 class HttpResponse:
     http_code: int
@@ -40,6 +36,11 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def links(self):
         with open('links.json') as f:
             return json.load(f)
+
+    @cached_property
+    def search_link(self):
+        return self.links.get('_search', SEARCH_URL)
+
 
     @cached_property
     def url(self):
@@ -74,7 +75,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def redirect(self, req: HttpRequest) -> HttpResponse:
         tokens = req.query['q'].split(" ")
         link = tokens[0]
-        location = self.links[link] if link in self.links else SEARCH_URL.format(link)
+        location = self.links.get(link, self.search_link.format(link))
         header = "Location", location
         response = HttpResponse(302, header)
         print(f"redirecting to {response}")
@@ -101,7 +102,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         self.links[name] = url
         self.__dict__.pop('links', None)
         with open('links.json', 'w') as f:
-            json.dump(self.links, f)
+            json.dump(self.links, f, indent=4)
 
 
 
