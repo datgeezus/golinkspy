@@ -3,10 +3,10 @@ from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import parse_qsl, urlparse
 import json
+import argparse
 
-host_name = "localhost"
-port = 6060
-
+HOST_NAME = "localhost"
+PORT = 6060
 SEARCH_URL = "https://www.google.com/search?q={}"
 
 @dataclass
@@ -108,8 +108,17 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    web_server = HTTPServer((host_name, port), WebRequestHandler)
-    print(f"Server started http:/{host_name}:{port}")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", action="store", type=str, default=HOST_NAME)
+    parser.add_argument("--port", action="store", type=int, default=PORT)
+    args = parser.parse_args()
+
+    host = args.host;
+    port = args.port;
+
+
+    web_server = HTTPServer((host, port), WebRequestHandler)
+    print(f"Server started http://{host}:{port}")
 
     try:
         web_server.serve_forever()
