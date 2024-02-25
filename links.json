@@ -1,4 +1,6 @@
 {
     "youtube": "https://www.youtube.com",
-    "_search": "https://www.google.com/search?q={}"
+    "youtube_watch": "https://www.youtube.com/watch?v={}",
+    "youtube_search": "https://www.youtube.com/results?search_query={}",
+    "_search": "https://www.google.com/search?q={}",
 }

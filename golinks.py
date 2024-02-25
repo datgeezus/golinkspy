@@ -74,8 +74,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def redirect(self, req: HttpRequest) -> HttpResponse:
         tokens = req.query['q'].split(" ")
+        print(f'tokens {tokens}')
         link = tokens[0]
         location = self.links.get(link, self.search_link.format(link))
+        location = location.format(*tokens[1:])
         header = "Location", location
         response = HttpResponse(302, header)
         print(f"redirecting to {response}")
