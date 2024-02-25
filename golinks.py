@@ -15,7 +15,7 @@ LINKS = {
 class HttpResponse:
     http_code: int
     header: tuple[str, str]
-    body: str
+    body: str | None = None
 
 @dataclass
 class HttpRequest:
@@ -46,7 +46,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def http_request(self):
         return HttpRequest(
             self.url.path,
-            dict(parse_qsl(self.url.query))
+            self.query_data
         )
 
 
@@ -59,7 +59,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         self.send_response(response.http_code)
         self.send_header(response.header[0], response.header[1])
         self.end_headers()
-        self.wfile.write(response.body.encode("utf-8"))
+        if response.body:
+            self.wfile.write(response.body.encode("utf-8"))
 
 
     def redirect(self, req: HttpRequest) -> HttpResponse:
@@ -67,7 +68,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         link = tokens[0]
         location = LINKS[link]
         header = "Location", location
-        response = HttpResponse(302, header, '')
+        response = HttpResponse(302, header)
         print(f"redirecting to {response}")
         return response
 
