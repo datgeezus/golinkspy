@@ -89,6 +89,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def add_link(self, req: HttpRequest) -> HttpResponse:
         tokens = req.query['q'].split(" ")
+        print(f'tokens {tokens}')
         name = tokens[0]
         url = tokens[1]
 
@@ -100,9 +101,9 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def save(self, name: str, url: str):
         self.links[name] = url
-        self.__dict__.pop('links', None)
         with open('links.json', 'w') as f:
             json.dump(self.links, f, indent=4)
+        self.__dict__.pop('links', None)
 
 
 
