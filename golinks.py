@@ -32,9 +32,14 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def routes(self):
         return {
             '/go': self.redirect,
-            '/list': self.list_links
+            '/list': self.list_links,
+            '/add': self.add_link,
         }
 
+    @cached_property
+    def links(self):
+        with open('links.json') as f:
+            return json.load(f)
 
     @cached_property
     def url(self):
@@ -59,7 +64,8 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         response = self.routes[request.path](request)
 
         self.send_response(response.http_code)
-        self.send_header(response.header[0], response.header[1])
+        if response.header:
+            self.send_header(response.header[0], response.header[1])
         self.end_headers()
         if response.body:
             self.wfile.write(response.body.encode("utf-8"))
@@ -68,17 +74,35 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def redirect(self, req: HttpRequest) -> HttpResponse:
         tokens = req.query['q'].split(" ")
         link = tokens[0]
-        location = LINKS[link] if link in LINKS else SEARCH_URL.format(link)
+        location = self.links[link] if link in self.links else SEARCH_URL.format(link)
         header = "Location", location
         response = HttpResponse(302, header)
         print(f"redirecting to {response}")
         return response
 
     def list_links(self, req: HttpRequest) -> HttpResponse:
-        header = "ContentType", "application/json"
-        body = json.dumps(LINKS)
+        header = "Content-Type", "application/json"
+        body = json.dumps(self.links)
         response = HttpResponse(200, header, body)
         return response
+
+    def add_link(self, req: HttpRequest) -> HttpResponse:
+        tokens = req.query['q'].split(" ")
+        name = tokens[0]
+        url = tokens[1]
+
+        self.save(name, url)
+
+        header = "Content-Type", "application/json"
+        body = json.dumps(self.links)
+        return HttpResponse(201, header, body)
+
+    def save(self, name: str, url: str):
+        self.links[name] = url
+        self.__dict__.pop('links', None)
+        with open('links.json', 'w') as f:
+            json.dump(self.links, f)
+
 
 
 
