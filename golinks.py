@@ -7,6 +7,8 @@ import json
 host_name = "localhost"
 port = 6060
 
+SEARCH_URL = "https://www.google.com/search?q={}"
+
 LINKS = {
     "youtube": "https://www.youtube.com"
 }
@@ -66,7 +68,7 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def redirect(self, req: HttpRequest) -> HttpResponse:
         tokens = req.query['q'].split(" ")
         link = tokens[0]
-        location = LINKS[link]
+        location = LINKS[link] if link in LINKS else SEARCH_URL.format(link)
         header = "Location", location
         response = HttpResponse(302, header)
         print(f"redirecting to {response}")
