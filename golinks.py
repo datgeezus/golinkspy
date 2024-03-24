@@ -87,7 +87,11 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         if isinstance(link, str):
             return link.format(*tokens)
         else:
-            return self.__parse_link(link, tokens[0], tokens[1:])
+            if tokens:
+                return self.__parse_link(link, tokens[0], tokens[1:])
+            else:
+                print(link)
+                return link.get("_", self.search_link.format(key))
 
 
     def list_links(self, req: HttpRequest) -> HttpResponse:
