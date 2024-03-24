@@ -1,6 +1,10 @@
 {
-    "youtube": "https://www.youtube.com",
-    "youtube_watch": "https://www.youtube.com/watch?v={}",
-    "youtube_search": "https://www.youtube.com/results?search_query={}",
+    "wiki": "https://en.wikipedia.org/wiki/{}",
+    "github": "https://github.com/{}/{}",
+    "youtube": {
+        "watch": "https://www.youtube.com/watch?v={}",
+        "search": "https://www.youtube.com/results?search_query={}",
+        "_": "https://www.youtube.com"
+    },
     "_search": "https://www.google.com/search?q={}"
 }

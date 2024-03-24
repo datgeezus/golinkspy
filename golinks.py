@@ -75,19 +75,19 @@ class WebRequestHandler(BaseHTTPRequestHandler):
     def redirect(self, req: HttpRequest) -> HttpResponse:
         tokens = req.query['q'].split(" ")
         print(f'tokens {tokens}')
-        location = self.__parse_link(tokens)
+        location = self.__parse_link(self.links, tokens[0] , tokens[1:])
         header = "Location", location
         response = HttpResponse(302, header)
         print(f"redirecting to {response}")
         return response
 
-    def __parse_link(self, tokens: list[str]) -> str:
-        key = tokens[0]
-        link = self.links.get(key, self.search_link.format(key))
+    def __parse_link(self, links: map, key: str, tokens: list[str]) -> str:
+        print(f"parsing links={links}, key={key}, tokens={tokens}")
+        link = links.get(key, self.search_link.format(key))
         if isinstance(link, str):
-            return link.format(*tokens[1:])
+            return link.format(*tokens)
         else:
-            return link.get(tokens[1])
+            return self.__parse_link(link, tokens[0], tokens[1:])
 
 
     def list_links(self, req: HttpRequest) -> HttpResponse:
