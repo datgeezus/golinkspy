@@ -6,5 +6,6 @@
         "search": "https://www.youtube.com/results?search_query={}",
         "_": "https://www.youtube.com"
     },
-    "_search": "https://www.google.com/search?q={}"
+    "_search": "https://www.google.com/search?q={}",
+    "_": "https://www.google.com/search?q={}"
 }
