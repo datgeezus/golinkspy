@@ -86,11 +86,10 @@ class WebRequestHandler(BaseHTTPRequestHandler):
         link = links.get(key, self.search_link.format(key))
         if isinstance(link, str):
             return link.format(*tokens)
+        elif tokens:
+            return self.get_location(link, tokens[0], tokens[1:])
         else:
-            if tokens:
-                return self.__parse_link(link, tokens[0], tokens[1:])
-            else:
-                return link.get("_", self.search_link.format(key))
+            return link.get("_", self.search_link).format(key)
 
 
     def list_links(self, req: HttpRequest) -> HttpResponse:
