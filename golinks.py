@@ -83,13 +83,16 @@ class WebRequestHandler(BaseHTTPRequestHandler):
 
     def get_location(self, links: map, key: str, tokens: list[str]) -> str:
         print(f"parsing links={links}, key={key}, tokens={tokens}")
-        link = links.get(key, self.search_link.format(key))
+        link = links.get(key, self.get_default(key, links))
         if isinstance(link, str):
             return link.format(*tokens)
         elif tokens:
             return self.get_location(link, tokens[0], tokens[1:])
         else:
-            return link.get("_", self.search_link).format(key)
+            return self.get_default(key, link)
+
+    def get_default(self, key: str, links: map) -> str:
+        return links.get("_", self.search_link).format(key)
 
 
     def list_links(self, req: HttpRequest) -> HttpResponse:
